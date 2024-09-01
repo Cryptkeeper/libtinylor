@@ -441,7 +441,7 @@ Here is the caller graph for this function:</div>
 </div><div class="memdoc">
 
 <p>Configures the request to use a channel set, in the form of a 16-bit bitset of channels, "starting at" the first channel offset used. </p>
-<dl class="section note"><dt>Note</dt><dd>Any bits within the set that (once re-aligned to a 16-bit boundary) exceed the 16-bit window, will be disregarded. Pre-aligned 16-bit bitsets are recommended for best results and may set the request's cset offset and cbits fields directly. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Any bits within the set that (once re-aligned to a 16-bit boundary) exceed the 16-bit window, will be disregarded. Pre-aligned 16-bit bitsets are recommended for best results. You may set the request's cset offset and cbits fields directly. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">req</td><td>The request to configure. </td></tr>

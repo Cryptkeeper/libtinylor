@@ -17,6 +17,7 @@ var NAVTREEINDEX0 =
 "index.html#autotoc_md1":[0,0],
 "index.html#autotoc_md2":[0,1],
 "index.html#autotoc_md3":[0,2],
+"index.html#autotoc_md4":[0,3],
 "pages.html":[],
 "structlor__channel__set.html":[1,0,0],
 "structlor__channel__set.html#a53ab6bbca8bf07690e5a1a1a62e80c8d":[1,0,0,0],
