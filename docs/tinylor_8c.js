@@ -4,6 +4,7 @@ var tinylor_8c =
     [ "lor_encode_decis", "tinylor_8c.html#a8d8d0afbb593c3d6444cb012cdf4d074", null ],
     [ "lor_encode_effect", "tinylor_8c.html#a170a89a6274a97734b00f12ff1b6edb4", null ],
     [ "lor_get_cset_format", "tinylor_8c.html#a00e1c21c0422712e73d698429b8f51bb", null ],
+    [ "lor_get_intensity", "tinylor_8c.html#afe05723e473135872bca01f760602054", null ],
     [ "lor_set_channel", "tinylor_8c.html#a566277d44fc02828619810c36a9d0554", null ],
     [ "lor_set_channels", "tinylor_8c.html#a4c595977c627eb08ba9181af8d8e7f39", null ],
     [ "lor_set_effect", "tinylor_8c.html#ae4cb99bc098c81c14dd0ba2edb2d5d44", null ],

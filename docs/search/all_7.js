@@ -18,7 +18,7 @@ var searchData=
   ['lor_5ffmt_5fsingle_15',['LOR_FMT_SINGLE',['../tinylor_8h.html#af1a01cca8cbddf9afb6ea3a90d03a149ac5c58258174013effc1ba59e632f833e',1,'tinylor.h']]],
   ['lor_5ffmt_5funit_16',['LOR_FMT_UNIT',['../tinylor_8h.html#af1a01cca8cbddf9afb6ea3a90d03a149a0db7c6f62cfefa8d606e62e95d5cb402',1,'tinylor.h']]],
   ['lor_5fget_5fcset_5fformat_17',['lor_get_cset_format',['../tinylor_8c.html#a00e1c21c0422712e73d698429b8f51bb',1,'tinylor.c']]],
-  ['lor_5fget_5fintensity_18',['lor_get_intensity',['../tinylor_8h.html#aa255e0c297a25245de7d3982838d0e75',1,'tinylor.h']]],
+  ['lor_5fget_5fintensity_18',['lor_get_intensity',['../tinylor_8c.html#afe05723e473135872bca01f760602054',1,'lor_get_intensity(const unsigned char b):&#160;tinylor.c'],['../tinylor_8h.html#aa255e0c297a25245de7d3982838d0e75',1,'lor_get_intensity(unsigned char b):&#160;tinylor.c']]],
   ['lor_5fheartbeat_5fbytes_19',['LOR_HEARTBEAT_BYTES',['../tinylor_8h.html#a52b2adabc7288ee497f84bba3c61c078',1,'tinylor.h']]],
   ['lor_5fheartbeat_5fdelay_5fms_20',['LOR_HEARTBEAT_DELAY_MS',['../tinylor_8h.html#ad909c3eab45cccefa1676d34170acadc',1,'tinylor.h']]],
   ['lor_5fheartbeat_5fdelay_5fns_21',['LOR_HEARTBEAT_DELAY_NS',['../tinylor_8h.html#a3746c13772d28a8a1d5cbd255de37833',1,'tinylor.h']]],

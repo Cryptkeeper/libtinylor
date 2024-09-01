@@ -154,6 +154,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ab6ce8df32486df8bb07576bef6b28fed" id="r_ab6ce8df32486df8bb07576bef6b28fed"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6ce8df32486df8bb07576bef6b28fed">lor_write</a> (unsigned char *b, const size_t bs, const <a class="el" href="tinylor_8h.html#a21b6c8a1aeccc60b23dfe926c442fb9b">lor_req_s</a> *r, const size_t rs)</td></tr>
 <tr class="memdesc:ab6ce8df32486df8bb07576bef6b28fed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encodes and writes up to <code>rs</code> requests to the provided buffer <code>b</code> as binary data. Requests are first encoded into a scratch buffer to ensure the buffer has enough space to hold the encoded data. The function will attempt to write as many requests as possible to the buffer, up to the provided request count.  <br /></td></tr>
 <tr class="separator:ab6ce8df32486df8bb07576bef6b28fed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe05723e473135872bca01f760602054" id="r_afe05723e473135872bca01f760602054"><td class="memItemLeft" align="right" valign="top"><a class="el" href="tinylor_8h.html#a9ca5a7b907afcda321d37df3cd062b04">lor_intensity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe05723e473135872bca01f760602054">lor_get_intensity</a> (const unsigned char b)</td></tr>
+<tr class="memdesc:afe05723e473135872bca01f760602054"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encodes a [0,0xFF] value into a roughly equivalent LOR intensity value (precision is lossy) that is compatible with the protocol.  <br /></td></tr>
+<tr class="separator:afe05723e473135872bca01f760602054"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Protocol encoding functions implementation. </p>
@@ -383,6 +386,33 @@ Here is the caller graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="87,28,55,28,55,23,87,23"/>
 </map>
 </div>
+
+</div>
+</div>
+<a id="afe05723e473135872bca01f760602054" name="afe05723e473135872bca01f760602054"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe05723e473135872bca01f760602054">&#9670;&#160;</a></span>lor_get_intensity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="tinylor_8h.html#a9ca5a7b907afcda321d37df3cd062b04">lor_intensity</a> lor_get_intensity </td>
+          <td>(</td>
+          <td class="paramtype">unsigned char</td>          <td class="paramname"><span class="paramname"><em>b</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Encodes a [0,0xFF] value into a roughly equivalent LOR intensity value (precision is lossy) that is compatible with the protocol. </p>
+<dl class="section note"><dt>Note</dt><dd>This is a default implementation of the lor_intensity_fn type. It operates via a known truth table from protocol documentation. Other or custom implementations may be ideal for your specific use case. </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">b</td><td>The byte value to convert. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The scaled intensity value. </dd></dl>
 
 </div>
 </div>
