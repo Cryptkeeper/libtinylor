@@ -141,7 +141,7 @@ void lor_set_channel(lor_req_s* req, lor_channel c);
 ///        bitset of channels, "starting at" the first channel offset used.
 /// @note Any bits within the set that (once re-aligned to a 16-bit boundary)
 ///       exceed the 16-bit window, will be disregarded. Pre-aligned 16-bit
-///       bitsets are recommended for best results and may set the request's
+///       bitsets are recommended for best results. You may set the request's
 ///       cset offset and cbits fields directly.
 /// @param req The request to configure.
 /// @param first The first channel in the set.
