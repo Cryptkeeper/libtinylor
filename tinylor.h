@@ -123,6 +123,14 @@ typedef union lor_effect_data {
 /// @brief The length of the LOR heartbeat message \p LOR_HEARTBEAT_BYTES.
 #define LOR_HEARTBEAT_SIZE 5
 
+/// @def LOR_HEARTBEAT_DELAY_MS
+/// @brief The intended delay in milliseconds between sending LOR heartbeats.
+#define LOR_HEARTBEAT_DELAY_MS 500
+
+/// @def LOR_HEARTBEAT_DELAY_NS
+/// @brief The intended delay in nanoseconds between sending LOR heartbeats.
+#define LOR_HEARTBEAT_DELAY_NS 500000000
+
 /// @struct lor_req
 /// @brief Represents a request to apply an effect to a set of channels on a
 ///        specific unit. The effect may require additional arguments, which are
