@@ -1,0 +1,5 @@
+<map id="lor_set_intensity" name="lor_set_intensity">
+<area shape="rect" id="Node000001" title="Configures the request to set the intensity of the lights to the provided value." alt="" coords="5,5,122,31"/>
+<area shape="rect" id="Node000002" href="$tinylor_8c.html#ae4cb99bc098c81c14dd0ba2edb2d5d44" title="Configures the request to apply the specified effect. The effect may require additional arguments,..." alt="" coords="170,5,270,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="122,16,154,16,154,21,122,21"/>
+</map>

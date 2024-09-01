@@ -1,0 +1,5 @@
+<map id="lor_get_cset_format" name="lor_get_cset_format">
+<area shape="rect" id="Node000001" title="Determines the compressed format of the channel set for encoding." alt="" coords="124,5,260,31"/>
+<area shape="rect" id="Node000002" href="$tinylor_8c.html#ab6ce8df32486df8bb07576bef6b28fed" title="Encodes and writes up to rs requests to the provided buffer b as binary data. Requests are first enco..." alt="" coords="5,5,76,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="108,21,76,21,76,16,108,16"/>
+</map>

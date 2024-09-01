@@ -1,0 +1,11 @@
+<map id="lor_write" name="lor_write">
+<area shape="rect" id="Node000001" title="Encodes and writes up to rs requests to the provided buffer b as binary data. Requests are first enco..." alt="" coords="5,55,76,80"/>
+<area shape="rect" id="Node000002" href="$tinylor_8c.html#a0352eb57d0ea7972c5f976a289b3e147" title="Encodes a channel set into a buffer." alt="" coords="134,5,250,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="75,54,135,34,137,39,77,59"/>
+<area shape="rect" id="Node000003" href="$tinylor_8c.html#a170a89a6274a97734b00f12ff1b6edb4" title="Encodes an effect into a buffer, including any required arguments for the effect type." alt="" coords="130,55,254,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="76,65,114,65,114,70,76,70"/>
+<area shape="rect" id="Node000005" href="$tinylor_8c.html#a00e1c21c0422712e73d698429b8f51bb" title="Determines the compressed format of the channel set for encoding." alt="" coords="124,104,260,130"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="77,76,137,96,135,101,75,81"/>
+<area shape="rect" id="Node000004" href="$tinylor_8c.html#a8d8d0afbb593c3d6444cb012cdf4d074" title="Encodes a decisecond value into a 2&#45;byte buffer." alt="" coords="308,55,430,80"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="254,65,292,65,292,70,254,70"/>
+</map>

@@ -1,0 +1,24 @@
+<map id="main" name="main">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,35,55,60"/>
+<area shape="rect" id="Node000002" href="$tinylor__test_8c.html#a2402d84378fdc3e3ae207addeb571998" title="Tests the channel alignment calculation." alt="" coords="103,5,261,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="55,40,97,32,98,37,56,45"/>
+<area shape="rect" id="Node000004" href="$tinylor__test_8c.html#a9d616a784fa4fd0d9358ad2735370e42" title="Tests the channel format header byte selection." alt="" coords="112,55,252,96"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="56,49,98,57,97,63,55,55"/>
+<area shape="rect" id="Node000003" href="$tinylor_8c.html#a4c595977c627eb08ba9181af8d8e7f39" title="Configures the request to use a channel set, in the form of a 16&#45;bit bitset of channels,..." alt="" coords="309,5,428,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="261,16,293,16,293,21,261,21"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="249,52,309,34,310,39,251,57"/>
+<area shape="rect" id="Node000005" href="$tinylor_8c.html#ae4cb99bc098c81c14dd0ba2edb2d5d44" title="Configures the request to apply the specified effect. The effect may require additional arguments,..." alt="" coords="318,55,419,80"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="252,70,303,68,304,73,252,75"/>
+<area shape="rect" id="Node000006" href="$tinylor_8c.html#ac93a0236ee2cb3a98985b801d2776071" title="Configures the request to be sent to the specified unit. A unit is required for all requests...." alt="" coords="324,104,413,130"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="252,88,310,101,309,106,251,93"/>
+<area shape="rect" id="Node000007" href="$tinylor_8c.html#ab6ce8df32486df8bb07576bef6b28fed" title="Encodes and writes up to rs requests to the provided buffer b as binary data. Requests are first enco..." alt="" coords="334,153,404,179"/>
+<area shape="poly" id="edge7_Node000004_Node000007" title=" " alt="" coords="221,94,310,140,320,144,318,149,308,145,219,99"/>
+<area shape="rect" id="Node000008" href="$tinylor_8c.html#a0352eb57d0ea7972c5f976a289b3e147" title="Encodes a channel set into a buffer." alt="" coords="486,104,603,130"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="403,154,481,132,482,137,405,159"/>
+<area shape="rect" id="Node000009" href="$tinylor_8c.html#a170a89a6274a97734b00f12ff1b6edb4" title="Encodes an effect into a buffer, including any required arguments for the effect type." alt="" coords="482,153,607,179"/>
+<area shape="poly" id="edge9_Node000007_Node000009" title=" " alt="" coords="404,164,467,164,467,169,404,169"/>
+<area shape="rect" id="Node000011" href="$tinylor_8c.html#a00e1c21c0422712e73d698429b8f51bb" title="Determines the compressed format of the channel set for encoding." alt="" coords="476,203,613,228"/>
+<area shape="poly" id="edge11_Node000007_Node000011" title=" " alt="" coords="405,173,482,195,481,200,403,178"/>
+<area shape="rect" id="Node000010" href="$tinylor_8c.html#a8d8d0afbb593c3d6444cb012cdf4d074" title="Encodes a decisecond value into a 2&#45;byte buffer." alt="" coords="661,153,783,179"/>
+<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="607,164,645,164,645,169,607,169"/>
+</map>

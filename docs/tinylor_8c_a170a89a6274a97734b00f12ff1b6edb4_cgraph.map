@@ -1,0 +1,5 @@
+<map id="lor_encode_effect" name="lor_encode_effect">
+<area shape="rect" id="Node000001" title="Encodes an effect into a buffer, including any required arguments for the effect type." alt="" coords="5,5,130,31"/>
+<area shape="rect" id="Node000002" href="$tinylor_8c.html#a8d8d0afbb593c3d6444cb012cdf4d074" title="Encodes a decisecond value into a 2&#45;byte buffer." alt="" coords="178,5,300,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,16,162,16,162,21,130,21"/>
+</map>

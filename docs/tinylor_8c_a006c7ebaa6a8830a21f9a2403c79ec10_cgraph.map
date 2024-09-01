@@ -1,0 +1,5 @@
+<map id="lor_set_fade" name="lor_set_fade">
+<area shape="rect" id="Node000001" title="Configures the request to fade from one intensity to another over a specified duration in deciseconds..." alt="" coords="5,5,98,31"/>
+<area shape="rect" id="Node000002" href="$tinylor_8c.html#ae4cb99bc098c81c14dd0ba2edb2d5d44" title="Configures the request to apply the specified effect. The effect may require additional arguments,..." alt="" coords="146,5,246,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,16,130,16,130,21,98,21"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="lor_get_cset_format" name="lor_get_cset_format">
+<area shape="rect" id="Node000001" title="Determines the compressed format of the channel set for encoding." alt="" coords="408,13,545,38"/>
+<area shape="rect" id="Node000002" href="$tinylor_8c.html#ab6ce8df32486df8bb07576bef6b28fed" title="Encodes and writes up to rs requests to the provided buffer b as binary data. Requests are first enco..." alt="" coords="290,13,360,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="392,28,361,28,361,23,392,23"/>
+<area shape="rect" id="Node000003" href="$tinylor__test_8c.html#a9d616a784fa4fd0d9358ad2735370e42" title="Tests the channel format header byte selection." alt="" coords="103,5,242,46"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="274,28,242,28,242,23,274,23"/>
+<area shape="rect" id="Node000004" href="$tinylor__test_8c.html#a840291bc02cba5474a4cb46a9b9566fe" title=" " alt="" coords="5,13,55,38"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="87,28,55,28,55,23,87,23"/>
+</map>

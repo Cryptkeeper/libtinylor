@@ -1,0 +1,5 @@
+<map id="test_channel_alignment" name="test_channel_alignment">
+<area shape="rect" id="Node000001" title="Tests the channel alignment calculation." alt="" coords="5,5,164,31"/>
+<area shape="rect" id="Node000002" href="$tinylor_8c.html#a4c595977c627eb08ba9181af8d8e7f39" title="Configures the request to use a channel set, in the form of a 16&#45;bit bitset of channels,..." alt="" coords="212,5,331,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,16,196,16,196,21,164,21"/>
+</map>

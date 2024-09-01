@@ -1,0 +1,11 @@
+<map id="lor_set_effect" name="lor_set_effect">
+<area shape="rect" id="Node000001" title="Configures the request to apply the specified effect. The effect may require additional arguments,..." alt="" coords="290,55,390,80"/>
+<area shape="rect" id="Node000002" href="$tinylor_8c.html#a006c7ebaa6a8830a21f9a2403c79ec10" title="Configures the request to fade from one intensity to another over a specified duration in deciseconds..." alt="" coords="126,5,218,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="279,52,218,34,220,29,280,47"/>
+<area shape="rect" id="Node000003" href="$tinylor_8c.html#a3c3e73ba4428c615b43131ae8e597268" title="Configures the request to set the intensity of the lights to the provided value." alt="" coords="114,55,230,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="275,70,231,70,231,65,275,65"/>
+<area shape="rect" id="Node000004" href="$tinylor__test_8c.html#a9d616a784fa4fd0d9358ad2735370e42" title="Tests the channel format header byte selection." alt="" coords="103,104,242,145"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="286,88,235,106,233,101,285,83"/>
+<area shape="rect" id="Node000005" href="$tinylor__test_8c.html#a840291bc02cba5474a4cb46a9b9566fe" title=" " alt="" coords="5,112,55,138"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="87,128,55,128,55,122,87,122"/>
+</map>
