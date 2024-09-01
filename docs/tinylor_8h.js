@@ -4,6 +4,8 @@ var tinylor_8h =
     [ "lor_effect_data", "unionlor__effect__data.html", "unionlor__effect__data" ],
     [ "lor_req", "structlor__req.html", "structlor__req" ],
     [ "LOR_HEARTBEAT_BYTES", "tinylor_8h.html#a52b2adabc7288ee497f84bba3c61c078", null ],
+    [ "LOR_HEARTBEAT_DELAY_MS", "tinylor_8h.html#ad909c3eab45cccefa1676d34170acadc", null ],
+    [ "LOR_HEARTBEAT_DELAY_NS", "tinylor_8h.html#a3746c13772d28a8a1d5cbd255de37833", null ],
     [ "LOR_HEARTBEAT_SIZE", "tinylor_8h.html#a51e2a45622b6d67d340c0c19a8e1454a", null ],
     [ "lor_channel", "tinylor_8h.html#ac926201d73d18b9f7fe0459982e8a847", null ],
     [ "lor_channel_format", "tinylor_8h.html#abbb280751e1fd425bcf2ea674a43ebd7", null ],
