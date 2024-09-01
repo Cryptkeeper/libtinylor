@@ -155,3 +155,9 @@ size_t lor_write(unsigned char* b, const size_t bs, const lor_req_s* r,
   }
   return h;
 }
+
+lor_intensity lor_get_intensity(const unsigned char b) {
+  // scale b from (0,255) to (240,1) which is the LOR intensity range
+  static const lor_intensity ceiling = 240;
+  return ceiling - (lor_intensity) ((1.0f - ((float) b / 255.0f)) * 239);
+}
