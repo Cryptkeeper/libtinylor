@@ -34,7 +34,7 @@ int lor_set_effect(lor_req_s* req, const lor_effect e,
       break;
   }
   req->effect = e;
-  req->args = args != NULL ? *args : (lor_effect_args_u){0};
+  req->args = args != NULL ? *args : (lor_effect_args_u) {0};
   return 0;
 }
 
@@ -157,7 +157,7 @@ size_t lor_write(unsigned char* b, const size_t bs, const lor_req_s* r,
 }
 
 lor_intensity lor_get_intensity(const unsigned char b) {
-  // scale b from (0,255) to (240,1) which is the LOR intensity range
-  static const lor_intensity ceiling = 240;
-  return ceiling - (lor_intensity) ((1.0f - ((float) b / 255.0f)) * 239);
+  const int intensity = (b * 100 + 127) / 255; // scale 0-255 to 0-100
+  if (intensity >= 100) return 1;              // clamp if above max intensity
+  return (lor_intensity) (228 - intensity * 2);// inverted linear scale
 }
