@@ -91,17 +91,33 @@ static int lor_encode_cset(unsigned char* const b,
   return w;
 }
 
-/// @brief Encodes a decisecond value into a 2-byte buffer.
+/// @brief Encodes a decisecond value.
 /// @param b The buffer to write the decisecond value to.
 /// @param ds The decisecond value to encode.
 /// @return The number of bytes written to the buffer.
-/// @note Caller is responsible for ensuring buffer is at least 2 bytes in size.
 static int lor_encode_decis(unsigned char* b, const lor_decisec ds) {
-  const int t0 = ds >> 8;
-  const int t1 = ds & 0xFF;
+  const int t0 = ds >> 8;  // high
+  const int t1 = ds & 0xFF;// low
   b[0] = t0 | (!t0 ? 0x80 : (!t1 ? 0x40 : 0));
   b[1] = t1 ? t1 : 1;
   return 2;
+}
+
+/// @brief Encodes a fade effect as an intensity delta relative to the duration
+/// of the effect in deciseconds.
+/// @param b The buffer to write the fade value to.
+/// @return The number of bytes written to the buffer.
+/// @note This appears to output values equivalent to the stock configuration.
+/// tinylor originally encoded deciseconds as an independent value (i.e. not
+/// relative to the intensity values), but this did not visually match the
+/// intended behavior.
+static int lor_encode_fade_rate(unsigned char* b,
+                                const lor_effect_args_u* args) {
+  const int dt =
+          __builtin_abs(args->fade.start_intensity - args->fade.end_intensity);
+  const int rt =
+          (int) ((double) dt * 256.0 / ((double) args->fade.deciseconds * 12));
+  return lor_encode_decis(b, rt);
 }
 
 /// @brief Encodes an effect into a buffer, including any required arguments
@@ -122,10 +138,10 @@ static int lor_encode_effect(unsigned char* const b, const lor_effect e,
     case LOR_FADE:
       b[w++] = d->fade.start_intensity;
       b[w++] = d->fade.end_intensity;
-      w += lor_encode_decis(b, d->fade.deciseconds);
+      w += lor_encode_fade_rate(b, d);
       break;
     case LOR_PULSE:
-      b[w++] = d->pulse.deciseconds;
+      w += lor_encode_decis(b, d->pulse.deciseconds);
       break;
     case LOR_SET_DMX_INTENSITY:
       b[w++] = d->set_dmx_intensity.output;
