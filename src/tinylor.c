@@ -165,7 +165,7 @@ size_t lor_write(unsigned char* b, const size_t bs, const lor_req_s* r,
     w += lor_encode_effect(&t[w], req->effect, &req->args);
     w += lor_encode_cset(&t[w], &req->cset);
     t[w++] = 0;
-    if (w > bs) return w;
+    if (h + w > bs) return w;
     __builtin_memcpy(&b[h], t, w);
     h += w;
   }
