@@ -32,7 +32,7 @@ typedef unsigned short lor_decisec;
 ///        16-channel boundary (via a multiplier).
 typedef struct lor_channel_set {
   /// @brief The offset of the first channel in the set.
-  /// @note The offset is a 6-bit unsigned integer, with a maximum value of 64.
+  /// @note The offset is a 6-bit unsigned integer, with a maximum value of 63.
   unsigned char offset;
   /// @brief The 16-bit bitset of channels to apply the effect to relative to
   ///        the offset.
