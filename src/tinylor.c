@@ -138,7 +138,7 @@ static int lor_encode_effect(unsigned char* const b, const lor_effect e,
     case LOR_FADE:
       b[w++] = d->fade.start_intensity;
       b[w++] = d->fade.end_intensity;
-      w += lor_encode_fade_rate(b, d);
+      w += lor_encode_fade_rate(&b[w], d);
       break;
     case LOR_PULSE:
       w += lor_encode_decis(b, d->pulse.deciseconds);
