@@ -40,7 +40,7 @@ typedef unsigned short lor_decisec;
 ///        16-channel boundary (via a multiplier).
 typedef struct lor_channel_set {
   /// @brief The offset of the first channel in the set.
-  /// @note The offset is a 6-bit unsigned integer, with a maximum value of 64.
+  /// @note The offset is a 6-bit unsigned integer, with a maximum value of 63.
   unsigned char offset;
   /// @brief The 16-bit bitset of channels to apply the effect to relative to
   ///        the offset.
@@ -377,7 +377,7 @@ static int lor_encode_effect(unsigned char* const b, const lor_effect e,
     case LOR_FADE:
       b[w++] = d->fade.start_intensity;
       b[w++] = d->fade.end_intensity;
-      w += lor_encode_fade_rate(b, d);
+      w += lor_encode_fade_rate(&b[w], d);
       break;
     case LOR_PULSE:
       w += lor_encode_decis(b, d->pulse.deciseconds);
@@ -404,7 +404,7 @@ size_t lor_write(unsigned char* b, const size_t bs, const lor_req_s* r,
     w += lor_encode_effect(&t[w], req->effect, &req->args);
     w += lor_encode_cset(&t[w], &req->cset);
     t[w++] = 0;
-    if (w > bs) return w;
+    if (h + w > bs) return w;
     __builtin_memcpy(&b[h], t, w);
     h += w;
   }
