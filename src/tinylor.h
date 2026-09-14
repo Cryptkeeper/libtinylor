@@ -52,14 +52,14 @@ typedef struct lor_channel_set {
 ///        provided helper functions which handle potential data validation
 ///        and conversion that you may not want to do.
 typedef enum lor_effect {
-  LOR_SET_LIGHTS = 0x01,       ///< Set the lights to full intensity.
-  LOR_SET_OFF = 0x02,          ///< Turn the lights off.
-  LOR_SET_INTENSITY = 0x03,    ///< Set the lights to a specific intensity.
-  LOR_FADE = 0x04,             ///< Fade between two intensities over time.
-  LOR_PULSE = 0x05,            ///< Cycle the lights between two intensities.
-  LOR_TWINKLE = 0x06,          ///< Twinkle the lights using hardware controls.
-  LOR_SHIMMER = 0x07,          ///< Shimmer the lights using hardware controls.
-  LOR_SET_DMX_INTENSITY = 0x08,///< Write raw DMX protocol data.
+  LOR_SET_LIGHTS = 0x1,       ///< Set the lights to full intensity.
+  LOR_SET_OFF = 0x2,          ///< Turn the lights off.
+  LOR_SET_INTENSITY = 0x3,    ///< Set the lights to a specific intensity.
+  LOR_FADE = 0x4,             ///< Fade between two intensities over time.
+  LOR_PULSE = 0x5,            ///< Cycle the lights between two intensities.
+  LOR_TWINKLE = 0x6,          ///< Twinkle the lights using hardware controls.
+  LOR_SHIMMER = 0x7,          ///< Shimmer the lights using hardware controls.
+  LOR_SET_DMX_INTENSITY = 0x8,///< Write raw DMX protocol data.
 } lor_effect;
 
 /// @enum lor_channel_format
@@ -71,8 +71,8 @@ typedef enum lor_effect {
 typedef enum lor_channel_format {
   LOR_FMT_SINGLE = 0x00,   ///< Single channel.
   LOR_FMT_16 = 0x10,       ///< 16-bit bitset of channels.
-  LOR_FMT_8L = 0x20,       ///< 8-bit bitset of channels, low byte.
-  LOR_FMT_8H = 0x30,       ///< 8-bit bitset of channels, high byte.
+  LOR_FMT_8H = 0x20,       ///< 8-bit bitset of channels, high byte (9-16).
+  LOR_FMT_8L = 0x30,       ///< 8-bit bitset of channels, low byte (1-8).
   LOR_FMT_UNIT = 0x40,     ///< Unit number, no channels.
   LOR_FMT_MULTIPART = 0x50,///< Multi-part channel set.
 } lor_channel_format;
