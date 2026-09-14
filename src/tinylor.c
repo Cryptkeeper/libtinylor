@@ -4,6 +4,26 @@
 #include "tinylor.h"
 #endif
 
+void lor_unit_set_add(lor_unit_set* s, const lor_unit unit) {
+  uint64_t* bits = &s->bits[unit / 64];
+  *bits |= (uint64_t) 1 << (unit % 64);
+}
+
+void lor_unit_set_all(lor_unit_set* s, const lor_unit* u, const size_t us) {
+  for (size_t i = 0; i < us; i++) {
+    const lor_unit unit = u[i];
+    uint64_t* bits = &s->bits[unit / 64];
+    *bits |= (uint64_t) 1 << (unit % 64);
+  }
+}
+
+void lor_unit_set_clear(lor_unit_set* s) {
+  s->bits[0] = 0;
+  s->bits[1] = 0;
+  s->bits[2] = 0;
+  s->bits[3] = 0;
+}
+
 void lor_set_channel(lor_req_s* req, lor_channel c) {
   c %= 1024;// prevent overflow of max channel index
             // max offset of 64 (6-bits) multiplied by 16-bits per offset
@@ -13,12 +33,20 @@ void lor_set_channel(lor_req_s* req, lor_channel c) {
 
 void lor_set_channels(lor_req_s* req, lor_channel first, const uint16_t cbits) {
   first %= 1024;                        // prevent overflow of max channel index
-  const int off = first % 16;           // get boundary offset of first channel
+  const unsigned int off = first % 16;  // get boundary offset of first channel
   req->cset.offset = (first - off) / 16;// set offset to first aligned channel
   req->cset.cbits = cbits << off;       // shift bits to match first channel
 }
 
-void lor_set_unit(lor_req_s* req, const lor_unit u) { req->unit = u; }
+void lor_set_unit(lor_req_s* req, const lor_unit u) {
+  req->unit = u;
+  req->units = NULL;
+}
+
+void lor_set_units(lor_req_s* req, lor_unit_set* units) {
+  req->unit = LOR_UNIT_ID_LIST;
+  req->units = units;
+}
 
 int lor_set_effect(lor_req_s* req, const lor_effect e,
                    const lor_effect_args_u* args) {
@@ -169,15 +197,34 @@ static int lor_encode_effect(uint8_t* const b, const lor_effect e,
   return w;
 }
 
+/// @def LOR_MAX_UNIT_LIST
+/// @brief The size of the unit ID space scanned when encoding a unit list, i.e.
+///        one bit per possible \p lor_unit value (0-255). The protocol's count
+///        byte allows at most 255 entries, but valid unit IDs are limited to
+///        [1, 0xF0] so a list can never exceed 240 entries in practice.
+#define LOR_MAX_UNIT_LIST 256
+
 size_t lor_write(uint8_t* b, const size_t bs, const lor_req_s* r,
                  const size_t rs) {
   size_t h = 0;
+  // largest command parameters are ~25b, variable unit list up to
+  // LOR_MAX_UNIT_LIST, then padded for safety
+  uint8_t t[512] = {0};
   for (size_t i = 0; i < rs; i++) {
     size_t w = 0;
-    uint8_t t[16] = {0};
     const lor_req_s* const req = &r[i];
     t[w++] = 0;
     t[w++] = req->unit;
+    if (req->units != NULL) {
+      const size_t n = w++;// count prefix placeholder
+      t[n] = 0;
+      for (unsigned int i = 0; i < LOR_MAX_UNIT_LIST; i++) {
+        if (req->units->bits[i / 64] & ((uint64_t) 1 << (i % 64))) {
+          t[w++] = i;
+          t[n]++;
+        }
+      }
+    }
     t[w++] = req->effect | lor_get_cset_format(&req->cset);
     w += lor_encode_effect(&t[w], req->effect, &req->args);
     w += lor_encode_cset(&t[w], &req->cset);

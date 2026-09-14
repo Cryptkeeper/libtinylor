@@ -124,6 +124,54 @@ typedef union lor_effect_data {
 /// @brief The intended delay in nanoseconds between sending LOR heartbeats.
 #define LOR_HEARTBEAT_DELAY_NS 500000000
 
+/// @def LOR_UNIT_ID_ALL
+/// @brief The broadcast unit ID. A request addressed to this value is executed
+///        by every unit on the bus.
+#define LOR_UNIT_ID_ALL 0xFF
+
+/// @def LOR_UNIT_ID_HOST
+/// @brief The reply marker. Frames sent from a unit back to the host (e.g. the
+///        response to a version query) begin with this value in place of a unit
+///        ID. It is never a valid destination for a request.
+#define LOR_UNIT_ID_HOST 0xFE
+
+/// @def LOR_UNIT_ID_LIST
+/// @brief The unit list address. It is followed on the wire by a count byte and
+///        that many unit IDs; every unit whose ID appears in the list executes
+///        the request. Set automatically by \p lor_set_units.
+#define LOR_UNIT_ID_LIST 0xF2
+
+/// @struct lor_unit_set
+/// @brief Represents a set of unit IDs as a 256-bit bitset, used to address a
+///        request to an arbitrary subset of units in a single frame (see
+///        \p lor_set_units). Initialize with \p lor_unit_set_clear or by zero
+///        initialization before adding units.
+/// @note Only unit IDs in [1, 0xF0] are valid on the wire. Unit ID 0 is the
+///       frame delimiter and must never be added; membership is not validated.
+typedef struct lor_unit_set {
+  /// @brief Membership bits. Unit ID \p u is a member when bit (u % 64) of
+  ///        bits[u / 64] is set.
+  uint64_t bits[4];
+} lor_unit_set;
+
+/// @brief Adds a single unit ID to the set. Adding an ID that is already a
+///        member has no effect.
+/// @param s The set to modify.
+/// @param unit The unit ID to add, in [1, 0xF0].
+void lor_unit_set_add(lor_unit_set* s, lor_unit unit);
+
+/// @brief Adds each unit ID in an array to the set.
+/// @note Equivalent to calling \p lor_unit_set_add once per element of \p u.
+/// @param s The set to modify.
+/// @param u The array of unit IDs to add, each in [1, 0xF0].
+/// @param us The number of unit IDs in \p u.
+void lor_unit_set_all(lor_unit_set* s, const lor_unit* u, size_t us);
+
+/// @brief Removes every unit ID from the set, leaving it empty. Also serves to
+///        initialize a set whose storage has not been zeroed.
+/// @param s The set to clear.
+void lor_unit_set_clear(lor_unit_set* s);
+
 /// @struct lor_req
 /// @brief Represents a request to apply an effect to a set of channels on a
 ///        specific unit. The effect may require additional arguments, which are
@@ -139,6 +187,8 @@ typedef struct lor_req {
   lor_channel_set cset;
   /// @brief The unit to apply the effect to.
   lor_unit unit;
+  /// @brief The units to apply the effect to.
+  lor_unit_set* units;
 } lor_req_s;
 
 /// @brief Configures the request to use a single, absolute channel.
@@ -157,12 +207,24 @@ void lor_set_channel(lor_req_s* req, lor_channel c);
 /// @param cbits The 16-bit bitset of channels to apply the effect to.
 void lor_set_channels(lor_req_s* req, lor_channel first, uint16_t cbits);
 
-/// @brief Configures the request to be sent to the specified unit. A unit is
-///        required for all requests. A magic value of 0xFF may be used to
+/// @brief Configures the request to be sent to accepted by specified unit. A unit
+///        is required for all requests. A magic value of 0xFF may be used to
 ///        broadcast the request to all units.
 /// @param req The request to configure.
 /// @param u The unit to send the request to, or 0xFF to broadcast to all units.
 void lor_set_unit(lor_req_s* req, lor_unit u);
+
+/// @brief Configures the request to be sent to, and accepted by, every unit in
+///        the provided set, using the \p LOR_UNIT_ID_LIST addressing form. This
+///        replaces any unit previously configured with \p lor_set_unit. The
+///        encoded frame grows by one count byte plus one byte per member.
+/// @note The set is referenced, not copied; it must remain valid and unchanged
+///       until the request has been encoded with \p lor_write. The set must
+///       contain at least one unit: an empty set encodes a count byte of 0x00,
+///       which terminates the frame before the command byte.
+/// @param req The request to configure.
+/// @param units The set of unit IDs to send the request to.
+void lor_set_units(lor_req_s* req, lor_unit_set* units);
 
 /// @brief Configures the request to apply the specified effect. The effect may
 ///        require additional arguments, which are provided in the args field as

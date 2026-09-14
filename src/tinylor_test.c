@@ -107,6 +107,42 @@ static void test_intensity_frame(const unsigned short cbits,
   assert_frame(b, written, expected, expected_size);
 }
 
+/// @brief Tests the unit set bit storage for a single unit.
+/// @param unit The unit to add to an otherwise empty set.
+static void test_unit_set_add(const lor_unit unit) {
+  lor_unit_set s;
+  lor_unit_set_clear(&s);
+  lor_unit_set_add(&s, unit);
+
+  for (size_t i = 0; i < sizeof(s.bits) / sizeof(s.bits[0]); i++) {
+    const uint64_t expected = i == unit / 64 ? (uint64_t) 1 << (unit % 64) : 0;
+    assert(s.bits[i] == expected);
+  }
+}
+
+/// @brief Tests the encoded frame of a request addressed to a set of units,
+///        from the leading 0x00 delimiter through the trailing one.
+/// @param units The units to include in the set.
+/// @param us The number of units in \p units.
+/// @param expected The expected frame bytes.
+/// @param expected_size The number of bytes in \p expected.
+static void test_unit_list_frame(const lor_unit* units, const size_t us,
+                                 const unsigned char* expected,
+                                 const size_t expected_size) {
+  lor_unit_set s;
+  lor_unit_set_clear(&s);
+  lor_unit_set_all(&s, units, us);
+
+  lor_req_s req = {0};
+  lor_set_units(&req, &s);
+  lor_set_effect(&req, LOR_SET_LIGHTS, NULL);// no channels, all off (0x41)
+
+  unsigned char b[64] = {0};
+  const size_t written = lor_write(b, sizeof(b), &req, 1);
+
+  assert_frame(b, written, expected, expected_size);
+}
+
 int main(void) {
   test_channel_format_header(0x00FF, LOR_FMT_8L);
   test_channel_format_header(0xFF00, LOR_FMT_8H);
@@ -160,6 +196,30 @@ int main(void) {
   test_intensity_frame(0x00FF, 0x78,
                        (unsigned char[]) {0x00, 0x01, 0x33, 0x78, 0xFF, 0x00},
                        6);
+
+  // unit set bits land in the correct 64-bit word, including bits 32-63
+  test_unit_set_add(1);
+  test_unit_set_add(31);
+  test_unit_set_add(32);
+  test_unit_set_add(33);
+  test_unit_set_add(63);
+  test_unit_set_add(64);
+  test_unit_set_add(200);
+  test_unit_set_add(255);
+
+  // unit lists contain exactly the units added, in ascending order
+  test_unit_list_frame(
+          (lor_unit[]) {1, 3}, 2,
+          (unsigned char[]) {0x00, 0xF2, 0x02, 0x01, 0x03, 0x41, 0x00}, 7);
+  test_unit_list_frame((lor_unit[]) {40, 70, 100, 200}, 4,
+                       (unsigned char[]) {0x00, 0xF2, 0x04, 0x28, 0x46, 0x64,
+                                          0xC8, 0x41, 0x00},
+                       9);
+  test_unit_list_frame(
+          (lor_unit[]) {240, 192, 191, 128, 127, 64, 63, 32, 31}, 9,
+          (unsigned char[]) {0x00, 0xF2, 0x09, 0x1F, 0x20, 0x3F, 0x40, 0x7F,
+                             0x80, 0xBF, 0xC0, 0xF0, 0x41, 0x00},
+          14);
 
   return 0;
 }
