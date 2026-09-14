@@ -201,7 +201,7 @@ typedef struct lor_req {
 
 /// @brief Configures the request to use a single channel, addressed by its
 ///        0-based index (index 0 is channel 1 in LOR software). The index is
-///        encoded as `0x80 | index` in the single-channel format, so the
+///        encoded as '0x80 | index' in the single-channel format, so the
 ///        controller receives it directly.
 /// @note The index is reduced modulo 1024. Indices 16 and above are split into
 ///       a 16-channel bank offset and select the multipart format, which

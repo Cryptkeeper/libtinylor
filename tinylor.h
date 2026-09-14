@@ -12,28 +12,37 @@
 #define TINYLOR_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 /// @typedef lor_channel
-/// @brief Represents a channel number, which is a unique identifier for a
-///        specific light or group of lights. Channels are typically in the
-///        range of [1, 1024].
-typedef unsigned short lor_channel;
+/// @brief Represents a 0-based channel index, which is a unique identifier for
+///        a specific light or group of lights on a unit. Index 0 is the first
+///        channel (shown as channel 1 in LOR software), index 15 is the 16th.
+///        Valid indices are [0, 1023]. Indices 16 and above address additional
+///        16-channel banks via the multipart channel format, which 16-channel
+///        controllers (e.g. CTB16PCg3) do not implement and silently discard.
+typedef uint16_t lor_channel;
 
 /// @typedef lor_intensity
 /// @brief Represents a scaled intensity value used by the LOR protocol.
 /// @note The value must be first converted to a scaled intensity value before
 ///       being passed to the LOR protocol.
-typedef unsigned char lor_intensity;
+typedef uint8_t lor_intensity;
 
 /// @typedef lor_unit
-/// @brief Represents a unit number, which is a unique identifier for a piece of
-///        LOR hardware. A value of 0xFF is reserved for broadcast messages.
-///        Units are typically in the range of [1, 0xF1] (1-241).
-typedef unsigned char lor_unit;
+/// @brief Represents a unit ID, which is a unique identifier for a piece of LOR
+///        hardware. Valid unit IDs are [1, 0xF0] (1-240); several units may
+///        share an ID, in which case they all execute the request. Reserved
+///        values: 0xFF (\p LOR_UNIT_ID_ALL) broadcasts to every unit, 0xF2
+///        (\p LOR_UNIT_ID_LIST) introduces a unit list (see \p lor_set_units),
+///        and 0xFE (\p LOR_UNIT_ID_HOST) marks replies sent from a unit to the
+///        host. 0x00 is the frame delimiter and must never be used. 0xF1 and
+///        0xF3-0xFD are unassigned; the CTB16PCg3 drops frames sent to them.
+typedef uint8_t lor_unit;
 
 /// @typedef lor_decisec
 /// @brief Represents a duration in deciseconds, which is 1/10th of a second.
-typedef unsigned short lor_decisec;
+typedef uint16_t lor_decisec;
 
 /// @struct lor_channel_set
 /// @brief Represents a grouping of 16 channels, as a bit set, aligned to a
@@ -41,14 +50,14 @@ typedef unsigned short lor_decisec;
 typedef struct lor_channel_set {
   /// @brief The offset of the first channel in the set.
   /// @note The offset is a 6-bit unsigned integer, with a maximum value of 63.
-  unsigned char offset;
+  uint8_t offset;
   /// @brief The 16-bit bitset of channels to apply the effect to relative to
   ///        the offset.
   /// @note The bitset is a 16-bit unsigned integer, with each bit representing
   ///       a channel in the set. The least significant bit represents the
   ///       first channel in the set, and the most significant bit represents
   ///       the 16th channel in the set.
-  unsigned short cbits;
+  uint16_t cbits;
 } lor_channel_set;
 
 /// @enum lor_effect
@@ -59,14 +68,14 @@ typedef struct lor_channel_set {
 ///        provided helper functions which handle potential data validation
 ///        and conversion that you may not want to do.
 typedef enum lor_effect {
-  LOR_SET_LIGHTS = 0x01,       ///< Set the lights to full intensity.
-  LOR_SET_OFF = 0x02,          ///< Turn the lights off.
-  LOR_SET_INTENSITY = 0x03,    ///< Set the lights to a specific intensity.
-  LOR_FADE = 0x04,             ///< Fade between two intensities over time.
-  LOR_PULSE = 0x05,            ///< Cycle the lights between two intensities.
-  LOR_TWINKLE = 0x06,          ///< Twinkle the lights using hardware controls.
-  LOR_SHIMMER = 0x07,          ///< Shimmer the lights using hardware controls.
-  LOR_SET_DMX_INTENSITY = 0x08,///< Write raw DMX protocol data.
+  LOR_SET_LIGHTS = 0x1,       ///< Set the lights to full intensity.
+  LOR_SET_OFF = 0x2,          ///< Turn the lights off.
+  LOR_SET_INTENSITY = 0x3,    ///< Set the lights to a specific intensity.
+  LOR_FADE = 0x4,             ///< Fade between two intensities over time.
+  LOR_PULSE = 0x5,            ///< Cycle the lights between two intensities.
+  LOR_TWINKLE = 0x6,          ///< Twinkle the lights using hardware controls.
+  LOR_SHIMMER = 0x7,          ///< Shimmer the lights using hardware controls.
+  LOR_SET_DMX_INTENSITY = 0x8,///< Write raw DMX protocol data.
 } lor_effect;
 
 /// @enum lor_channel_format
@@ -78,8 +87,8 @@ typedef enum lor_effect {
 typedef enum lor_channel_format {
   LOR_FMT_SINGLE = 0x00,   ///< Single channel.
   LOR_FMT_16 = 0x10,       ///< 16-bit bitset of channels.
-  LOR_FMT_8L = 0x20,       ///< 8-bit bitset of channels, low byte.
-  LOR_FMT_8H = 0x30,       ///< 8-bit bitset of channels, high byte.
+  LOR_FMT_8H = 0x20,       ///< 8-bit bitset of channels, high byte (9-16).
+  LOR_FMT_8L = 0x30,       ///< 8-bit bitset of channels, low byte (1-8).
   LOR_FMT_UNIT = 0x40,     ///< Unit number, no channels.
   LOR_FMT_MULTIPART = 0x50,///< Multi-part channel set.
 } lor_channel_format;
@@ -111,13 +120,13 @@ typedef union lor_effect_data {
   /// @brief Required effect arguments for LOR_SET_DMX_INTENSITY.
   struct {
     /// @brief The output value to set the DMX channel to (likely brightness).
-    unsigned char output;
+    uint8_t output;
   } set_dmx_intensity;
 } lor_effect_args_u;
 
 /// @def LOR_HEARTBEAT_BYTES
 /// @brief The pre-defined binary representation of a LOR heartbeat message.
-#define LOR_HEARTBEAT_BYTES ((unsigned char[]){0, 0xFF, 0x81, 0x56, 0})
+#define LOR_HEARTBEAT_BYTES ((uint8_t[]) {0, 0xFF, 0x81, 0x56, 0})
 
 /// @def LOR_HEARTBEAT_SIZE
 /// @brief The length of the LOR heartbeat message \p LOR_HEARTBEAT_BYTES.
@@ -130,6 +139,54 @@ typedef union lor_effect_data {
 /// @def LOR_HEARTBEAT_DELAY_NS
 /// @brief The intended delay in nanoseconds between sending LOR heartbeats.
 #define LOR_HEARTBEAT_DELAY_NS 500000000
+
+/// @def LOR_UNIT_ID_ALL
+/// @brief The broadcast unit ID. A request addressed to this value is executed
+///        by every unit on the bus.
+#define LOR_UNIT_ID_ALL 0xFF
+
+/// @def LOR_UNIT_ID_HOST
+/// @brief The reply marker. Frames sent from a unit back to the host (e.g. the
+///        response to a version query) begin with this value in place of a unit
+///        ID. It is never a valid destination for a request.
+#define LOR_UNIT_ID_HOST 0xFE
+
+/// @def LOR_UNIT_ID_LIST
+/// @brief The unit list address. It is followed on the wire by a count byte and
+///        that many unit IDs; every unit whose ID appears in the list executes
+///        the request. Set automatically by \p lor_set_units.
+#define LOR_UNIT_ID_LIST 0xF2
+
+/// @struct lor_unit_set
+/// @brief Represents a set of unit IDs as a 256-bit bitset, used to address a
+///        request to an arbitrary subset of units in a single frame (see
+///        \p lor_set_units). Initialize with \p lor_unit_set_clear or by zero
+///        initialization before adding units.
+/// @note Only unit IDs in [1, 0xF0] are valid on the wire. Unit ID 0 is the
+///       frame delimiter and must never be added; membership is not validated.
+typedef struct lor_unit_set {
+  /// @brief Membership bits. Unit ID \p u is a member when bit (u % 64) of
+  ///        bits[u / 64] is set.
+  uint64_t bits[4];
+} lor_unit_set;
+
+/// @brief Adds a single unit ID to the set. Adding an ID that is already a
+///        member has no effect.
+/// @param s The set to modify.
+/// @param unit The unit ID to add, in [1, 0xF0].
+void lor_unit_set_add(lor_unit_set* s, lor_unit unit);
+
+/// @brief Adds each unit ID in an array to the set.
+/// @note Equivalent to calling \p lor_unit_set_add once per element of \p u.
+/// @param s The set to modify.
+/// @param u The array of unit IDs to add, each in [1, 0xF0].
+/// @param us The number of unit IDs in \p u.
+void lor_unit_set_all(lor_unit_set* s, const lor_unit* u, size_t us);
+
+/// @brief Removes every unit ID from the set, leaving it empty. Also serves to
+///        initialize a set whose storage has not been zeroed.
+/// @param s The set to clear.
+void lor_unit_set_clear(lor_unit_set* s);
 
 /// @struct lor_req
 /// @brief Represents a request to apply an effect to a set of channels on a
@@ -146,11 +203,19 @@ typedef struct lor_req {
   lor_channel_set cset;
   /// @brief The unit to apply the effect to.
   lor_unit unit;
+  /// @brief The units to apply the effect to.
+  lor_unit_set* units;
 } lor_req_s;
 
-/// @brief Configures the request to use a single, absolute channel.
+/// @brief Configures the request to use a single channel, addressed by its
+///        0-based index (index 0 is channel 1 in LOR software). The index is
+///        encoded as '0x80 | index' in the single-channel format, so the
+///        controller receives it directly.
+/// @note The index is reduced modulo 1024. Indices 16 and above are split into
+///       a 16-channel bank offset and select the multipart format, which
+///       16-channel controllers do not implement (the request is dropped).
 /// @param req The request to configure.
-/// @param c The single, absolute channel to apply the effect to, less than 1024.
+/// @param c The 0-based channel index to apply the effect to, less than 1024.
 void lor_set_channel(lor_req_s* req, lor_channel c);
 
 /// @brief Configures the request to use a channel set, in the form of a 16-bit
@@ -160,24 +225,38 @@ void lor_set_channel(lor_req_s* req, lor_channel c);
 ///       bitsets are recommended for best results. You may set the request's
 ///       cset offset and cbits fields directly.
 /// @param req The request to configure.
-/// @param first The first channel in the set.
-/// @param cbits The 16-bit bitset of channels to apply the effect to.
-void lor_set_channels(lor_req_s* req, lor_channel first, unsigned short cbits);
+/// @param first The 0-based index of the first channel in the set, i.e. the
+///              channel selected by bit 0 of \p cbits (see \p lor_channel).
+/// @param cbits The 16-bit bitset of channels to apply the effect to; bit n
+///              selects channel index \p first + n.
+void lor_set_channels(lor_req_s* req, lor_channel first, uint16_t cbits);
 
-/// @brief Configures the request to be sent to the specified unit. A unit is
-///        required for all requests. A magic value of 0xFF may be used to
-///        broadcast the request to all units.
+/// @brief Configures the request to be sent to, and accepted by, the specified
+///        unit. A unit is required for all requests. A magic value of 0xFF may
+///        be used to broadcast the request to all units.
 /// @param req The request to configure.
 /// @param u The unit to send the request to, or 0xFF to broadcast to all units.
 void lor_set_unit(lor_req_s* req, lor_unit u);
+
+/// @brief Configures the request to be sent to, and accepted by, every unit in
+///        the provided set, using the \p LOR_UNIT_ID_LIST addressing form. This
+///        replaces any unit previously configured with \p lor_set_unit. The
+///        encoded frame grows by one count byte plus one byte per member.
+/// @note The set is referenced, not copied; it must remain valid and unchanged
+///       until the request has been encoded with \p lor_write. The set must
+///       contain at least one unit: an empty set encodes a count byte of 0x00,
+///       which terminates the frame before the command byte.
+/// @param req The request to configure.
+/// @param units The set of unit IDs to send the request to.
+void lor_set_units(lor_req_s* req, lor_unit_set* units);
 
 /// @brief Configures the request to apply the specified effect. The effect may
 ///        require additional arguments, which are provided in the args field as
 ///        a union. If provided, the args field is copied into the request at
 ///        which point the caller may safely discard the original args. Any
-///        non-NULL arguments will be copied into the request, even if the effect
-///        does not require them. This allows future expansion of usable effects
-///        without modifying the behavior of the function.
+///        non-NULL arguments will be copied into the request, even if the
+///        effect does not require them. This allows future expansion of usable
+///        effects without modifying the behavior of the function.
 /// @param req The request to configure.
 /// @param e The effect to apply.
 /// @param args The effect arguments, required if effect is LOR_SET_INTENSITY,
@@ -215,12 +294,12 @@ void lor_set_fade(lor_req_s* req, lor_intensity start, lor_intensity end,
 ///         buffer is returned. If the buffer is too small to hold all requests,
 ///         the number of bytes required to hold at least one additional request
 ///         is returned.
-size_t lor_write(unsigned char* b, size_t bs, const lor_req_s* r, size_t rs);
+size_t lor_write(uint8_t* b, size_t bs, const lor_req_s* r, size_t rs);
 
 /// @typedef lor_intensity_fn
 /// @brief Represents a function that converts an arbitrary byte value to a
 ///        a scaled intensity value used by the LOR protocol.
-typedef lor_intensity (*lor_intensity_fn)(unsigned char b);
+typedef lor_intensity (*lor_intensity_fn)(uint8_t b);
 
 /// @brief Encodes a [0,0xFF] value into a roughly equivalent LOR intensity
 ///        value (precision is lossy) that is compatible with the protocol.
@@ -229,7 +308,7 @@ typedef lor_intensity (*lor_intensity_fn)(unsigned char b);
 ///       or custom implementations may be ideal for your specific use case.
 /// @param b The byte value to convert.
 /// @return The scaled intensity value.
-lor_intensity lor_get_intensity(unsigned char b);
+lor_intensity lor_get_intensity(uint8_t b);
 
 #endif// TINYLOR_H
 
@@ -243,6 +322,26 @@ lor_intensity lor_get_intensity(unsigned char b);
 #include "tinylor.h"
 #endif
 
+void lor_unit_set_add(lor_unit_set* s, const lor_unit unit) {
+  uint64_t* bits = &s->bits[unit / 64];
+  *bits |= (uint64_t) 1 << (unit % 64);
+}
+
+void lor_unit_set_all(lor_unit_set* s, const lor_unit* u, const size_t us) {
+  for (size_t i = 0; i < us; i++) {
+    const lor_unit unit = u[i];
+    uint64_t* bits = &s->bits[unit / 64];
+    *bits |= (uint64_t) 1 << (unit % 64);
+  }
+}
+
+void lor_unit_set_clear(lor_unit_set* s) {
+  s->bits[0] = 0;
+  s->bits[1] = 0;
+  s->bits[2] = 0;
+  s->bits[3] = 0;
+}
+
 void lor_set_channel(lor_req_s* req, lor_channel c) {
   c %= 1024;// prevent overflow of max channel index
             // max offset of 64 (6-bits) multiplied by 16-bits per offset
@@ -250,15 +349,22 @@ void lor_set_channel(lor_req_s* req, lor_channel c) {
   req->cset.cbits = 1 << (c % 16);
 }
 
-void lor_set_channels(lor_req_s* req, lor_channel first,
-                      const unsigned short cbits) {
+void lor_set_channels(lor_req_s* req, lor_channel first, const uint16_t cbits) {
   first %= 1024;                        // prevent overflow of max channel index
-  const int off = first % 16;           // get boundary offset of first channel
+  const unsigned int off = first % 16;  // get boundary offset of first channel
   req->cset.offset = (first - off) / 16;// set offset to first aligned channel
   req->cset.cbits = cbits << off;       // shift bits to match first channel
 }
 
-void lor_set_unit(lor_req_s* req, const lor_unit u) { req->unit = u; }
+void lor_set_unit(lor_req_s* req, const lor_unit u) {
+  req->unit = u;
+  req->units = NULL;
+}
+
+void lor_set_units(lor_req_s* req, lor_unit_set* units) {
+  req->unit = LOR_UNIT_ID_LIST;
+  req->units = units;
+}
 
 int lor_set_effect(lor_req_s* req, const lor_effect e,
                    const lor_effect_args_u* args) {
@@ -306,25 +412,44 @@ lor_get_cset_format(const lor_channel_set* const cset) {
   return LOR_FMT_8H;
 }
 
+/// @brief Encodes a single-channel set as one byte: the channel's 0-based index
+///        with bit 7 set, as expected by the single-channel mode (0x00). Bit 7
+///        carries no information for the controller; it only ensures channel
+///        index 0 is not encoded as 0x00, the frame delimiter.
+/// @param b The buffer to write the channel byte to.
+/// @param cset The channel set to encode. Must have a zero offset and exactly
+///             one bit set (see lor_get_cset_format, LOR_FMT_SINGLE).
+/// @return The number of bytes written to the buffer, always 1.
+/// @note Caller is responsible for ensuring buffer is at least 1 byte in size.
+static int lor_encode_channel(uint8_t* const b,
+                              const lor_channel_set* const cset) {
+  b[0] = 0x80 | __builtin_ctz(cset->cbits);
+  return 1;
+}
+
 /// @brief Encodes a channel set into a buffer.
 /// @param b The buffer to write the channel set to.
 /// @param cset The channel set to encode.
 /// @return The number of bytes written to the buffer.
 /// @note Caller is responsible for ensuring buffer is at least 3 bytes in size.
-static int lor_encode_cset(unsigned char* const b,
+static int lor_encode_cset(uint8_t* const b,
                            const lor_channel_set* const cset) {
+  // zero value offset indicates it can fit within the direct addressing mode
+  // values above 0, even when single channel, must write as LOR_FMT_MULTIPART.
+  if (!cset->offset && __builtin_popcount(cset->cbits) == 1)
+    return lor_encode_channel(b, cset);
   int w = 0;
-  const unsigned char low = cset->cbits & 0xFF;
-  const unsigned char high = cset->cbits >> 8;
-  unsigned char opts = 0;
+  const uint8_t low = cset->cbits & 0xFF;
+  const uint8_t high = cset->cbits >> 8;
   if (cset->offset) {
+    uint8_t opts = 0;
     if (low) {
       opts = high ? 0 : 0x80;// LOR_CHANNELSET_OPT_8H
     } else {
       opts = 0x40;// LOR_CHANNELSET_OPT_8L
     }
+    b[w++] = cset->offset | opts;
   }
-  b[w++] = cset->offset | opts;
   if (low) b[w++] = low;
   if (high) b[w++] = high;
   return w;
@@ -334,7 +459,7 @@ static int lor_encode_cset(unsigned char* const b,
 /// @param b The buffer to write the decisecond value to.
 /// @param ds The decisecond value to encode.
 /// @return The number of bytes written to the buffer.
-static int lor_encode_decis(unsigned char* b, const lor_decisec ds) {
+static int lor_encode_decis(uint8_t* b, const lor_decisec ds) {
   const int t0 = ds >> 8;  // high
   const int t1 = ds & 0xFF;// low
   b[0] = t0 | (!t0 ? 0x80 : (!t1 ? 0x40 : 0));
@@ -350,8 +475,7 @@ static int lor_encode_decis(unsigned char* b, const lor_decisec ds) {
 /// tinylor originally encoded deciseconds as an independent value (i.e. not
 /// relative to the intensity values), but this did not visually match the
 /// intended behavior.
-static int lor_encode_fade_rate(unsigned char* b,
-                                const lor_effect_args_u* args) {
+static int lor_encode_fade_rate(uint8_t* b, const lor_effect_args_u* args) {
   const int dt =
           __builtin_abs(args->fade.start_intensity - args->fade.end_intensity);
   const int rt =
@@ -367,7 +491,7 @@ static int lor_encode_fade_rate(unsigned char* b,
 /// @return The number of bytes written to the buffer.
 /// @note Caller is responsible for ensuring buffer is large enough to hold the
 ///       encoded effect and arguments.
-static int lor_encode_effect(unsigned char* const b, const lor_effect e,
+static int lor_encode_effect(uint8_t* const b, const lor_effect e,
                              const lor_effect_args_u* const d) {
   int w = 0;
   switch (e) {
@@ -391,15 +515,34 @@ static int lor_encode_effect(unsigned char* const b, const lor_effect e,
   return w;
 }
 
-size_t lor_write(unsigned char* b, const size_t bs, const lor_req_s* r,
+/// @def LOR_MAX_UNIT_LIST
+/// @brief The size of the unit ID space scanned when encoding a unit list, i.e.
+///        one bit per possible \p lor_unit value (0-255). The protocol's count
+///        byte allows at most 255 entries, but valid unit IDs are limited to
+///        [1, 0xF0] so a list can never exceed 240 entries in practice.
+#define LOR_MAX_UNIT_LIST 256
+
+size_t lor_write(uint8_t* b, const size_t bs, const lor_req_s* r,
                  const size_t rs) {
   size_t h = 0;
+  // largest command parameters are ~25b, variable unit list up to
+  // LOR_MAX_UNIT_LIST, then padded for safety
+  uint8_t t[512] = {0};
   for (size_t i = 0; i < rs; i++) {
     size_t w = 0;
-    unsigned char t[16] = {0};
     const lor_req_s* const req = &r[i];
     t[w++] = 0;
     t[w++] = req->unit;
+    if (req->units != NULL) {
+      const size_t n = w++;// count prefix placeholder
+      t[n] = 0;
+      for (unsigned int i = 0; i < LOR_MAX_UNIT_LIST; i++) {
+        if (req->units->bits[i / 64] & ((uint64_t) 1 << (i % 64))) {
+          t[w++] = i;
+          t[n]++;
+        }
+      }
+    }
     t[w++] = req->effect | lor_get_cset_format(&req->cset);
     w += lor_encode_effect(&t[w], req->effect, &req->args);
     w += lor_encode_cset(&t[w], &req->cset);
@@ -411,7 +554,7 @@ size_t lor_write(unsigned char* b, const size_t bs, const lor_req_s* r,
   return h;
 }
 
-lor_intensity lor_get_intensity(const unsigned char b) {
+lor_intensity lor_get_intensity(const uint8_t b) {
   const int intensity = (b * 100 + 127) / 255; // scale 0-255 to 0-100
   if (intensity >= 100) return 1;              // clamp if above max intensity
   return (lor_intensity) (228 - intensity * 2);// inverted linear scale
