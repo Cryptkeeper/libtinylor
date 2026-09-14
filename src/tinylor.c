@@ -11,8 +11,7 @@ void lor_set_channel(lor_req_s* req, lor_channel c) {
   req->cset.cbits = 1 << (c % 16);
 }
 
-void lor_set_channels(lor_req_s* req, lor_channel first,
-                      const unsigned short cbits) {
+void lor_set_channels(lor_req_s* req, lor_channel first, const uint16_t cbits) {
   first %= 1024;                        // prevent overflow of max channel index
   const int off = first % 16;           // get boundary offset of first channel
   req->cset.offset = (first - off) / 16;// set offset to first aligned channel
@@ -72,12 +71,12 @@ lor_get_cset_format(const lor_channel_set* const cset) {
 /// @param cset The channel set to encode.
 /// @return The number of bytes written to the buffer.
 /// @note Caller is responsible for ensuring buffer is at least 3 bytes in size.
-static int lor_encode_cset(unsigned char* const b,
+static int lor_encode_cset(uint8_t* const b,
                            const lor_channel_set* const cset) {
   int w = 0;
-  const unsigned char low = cset->cbits & 0xFF;
-  const unsigned char high = cset->cbits >> 8;
-  unsigned char opts = 0;
+  const uint8_t low = cset->cbits & 0xFF;
+  const uint8_t high = cset->cbits >> 8;
+  uint8_t opts = 0;
   if (cset->offset) {
     if (low) {
       opts = high ? 0 : 0x80;// LOR_CHANNELSET_OPT_8H
@@ -95,7 +94,7 @@ static int lor_encode_cset(unsigned char* const b,
 /// @param b The buffer to write the decisecond value to.
 /// @param ds The decisecond value to encode.
 /// @return The number of bytes written to the buffer.
-static int lor_encode_decis(unsigned char* b, const lor_decisec ds) {
+static int lor_encode_decis(uint8_t* b, const lor_decisec ds) {
   const int t0 = ds >> 8;  // high
   const int t1 = ds & 0xFF;// low
   b[0] = t0 | (!t0 ? 0x80 : (!t1 ? 0x40 : 0));
@@ -111,8 +110,7 @@ static int lor_encode_decis(unsigned char* b, const lor_decisec ds) {
 /// tinylor originally encoded deciseconds as an independent value (i.e. not
 /// relative to the intensity values), but this did not visually match the
 /// intended behavior.
-static int lor_encode_fade_rate(unsigned char* b,
-                                const lor_effect_args_u* args) {
+static int lor_encode_fade_rate(uint8_t* b, const lor_effect_args_u* args) {
   const int dt =
           __builtin_abs(args->fade.start_intensity - args->fade.end_intensity);
   const int rt =
@@ -128,7 +126,7 @@ static int lor_encode_fade_rate(unsigned char* b,
 /// @return The number of bytes written to the buffer.
 /// @note Caller is responsible for ensuring buffer is large enough to hold the
 ///       encoded effect and arguments.
-static int lor_encode_effect(unsigned char* const b, const lor_effect e,
+static int lor_encode_effect(uint8_t* const b, const lor_effect e,
                              const lor_effect_args_u* const d) {
   int w = 0;
   switch (e) {
@@ -152,12 +150,12 @@ static int lor_encode_effect(unsigned char* const b, const lor_effect e,
   return w;
 }
 
-size_t lor_write(unsigned char* b, const size_t bs, const lor_req_s* r,
+size_t lor_write(uint8_t* b, const size_t bs, const lor_req_s* r,
                  const size_t rs) {
   size_t h = 0;
   for (size_t i = 0; i < rs; i++) {
     size_t w = 0;
-    unsigned char t[16] = {0};
+    uint8_t t[16] = {0};
     const lor_req_s* const req = &r[i];
     t[w++] = 0;
     t[w++] = req->unit;
@@ -172,7 +170,7 @@ size_t lor_write(unsigned char* b, const size_t bs, const lor_req_s* r,
   return h;
 }
 
-lor_intensity lor_get_intensity(const unsigned char b) {
+lor_intensity lor_get_intensity(const uint8_t b) {
   const int intensity = (b * 100 + 127) / 255; // scale 0-255 to 0-100
   if (intensity >= 100) return 1;              // clamp if above max intensity
   return (lor_intensity) (228 - intensity * 2);// inverted linear scale

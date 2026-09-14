@@ -4,28 +4,29 @@
 #define TINYLOR_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 /// @typedef lor_channel
 /// @brief Represents a channel number, which is a unique identifier for a
 ///        specific light or group of lights. Channels are typically in the
 ///        range of [1, 1024].
-typedef unsigned short lor_channel;
+typedef uint16_t lor_channel;
 
 /// @typedef lor_intensity
 /// @brief Represents a scaled intensity value used by the LOR protocol.
 /// @note The value must be first converted to a scaled intensity value before
 ///       being passed to the LOR protocol.
-typedef unsigned char lor_intensity;
+typedef uint8_t lor_intensity;
 
 /// @typedef lor_unit
 /// @brief Represents a unit number, which is a unique identifier for a piece of
 ///        LOR hardware. A value of 0xFF is reserved for broadcast messages.
 ///        Units are typically in the range of [1, 0xF1] (1-241).
-typedef unsigned char lor_unit;
+typedef uint8_t lor_unit;
 
 /// @typedef lor_decisec
 /// @brief Represents a duration in deciseconds, which is 1/10th of a second.
-typedef unsigned short lor_decisec;
+typedef uint16_t lor_decisec;
 
 /// @struct lor_channel_set
 /// @brief Represents a grouping of 16 channels, as a bit set, aligned to a
@@ -33,14 +34,14 @@ typedef unsigned short lor_decisec;
 typedef struct lor_channel_set {
   /// @brief The offset of the first channel in the set.
   /// @note The offset is a 6-bit unsigned integer, with a maximum value of 63.
-  unsigned char offset;
+  uint8_t offset;
   /// @brief The 16-bit bitset of channels to apply the effect to relative to
   ///        the offset.
   /// @note The bitset is a 16-bit unsigned integer, with each bit representing
   ///       a channel in the set. The least significant bit represents the
   ///       first channel in the set, and the most significant bit represents
   ///       the 16th channel in the set.
-  unsigned short cbits;
+  uint16_t cbits;
 } lor_channel_set;
 
 /// @enum lor_effect
@@ -103,13 +104,13 @@ typedef union lor_effect_data {
   /// @brief Required effect arguments for LOR_SET_DMX_INTENSITY.
   struct {
     /// @brief The output value to set the DMX channel to (likely brightness).
-    unsigned char output;
+    uint8_t output;
   } set_dmx_intensity;
 } lor_effect_args_u;
 
 /// @def LOR_HEARTBEAT_BYTES
 /// @brief The pre-defined binary representation of a LOR heartbeat message.
-#define LOR_HEARTBEAT_BYTES ((unsigned char[]){0, 0xFF, 0x81, 0x56, 0})
+#define LOR_HEARTBEAT_BYTES ((uint8_t[]) {0, 0xFF, 0x81, 0x56, 0})
 
 /// @def LOR_HEARTBEAT_SIZE
 /// @brief The length of the LOR heartbeat message \p LOR_HEARTBEAT_BYTES.
@@ -154,7 +155,7 @@ void lor_set_channel(lor_req_s* req, lor_channel c);
 /// @param req The request to configure.
 /// @param first The first channel in the set.
 /// @param cbits The 16-bit bitset of channels to apply the effect to.
-void lor_set_channels(lor_req_s* req, lor_channel first, unsigned short cbits);
+void lor_set_channels(lor_req_s* req, lor_channel first, uint16_t cbits);
 
 /// @brief Configures the request to be sent to the specified unit. A unit is
 ///        required for all requests. A magic value of 0xFF may be used to
@@ -207,12 +208,12 @@ void lor_set_fade(lor_req_s* req, lor_intensity start, lor_intensity end,
 ///         buffer is returned. If the buffer is too small to hold all requests,
 ///         the number of bytes required to hold at least one additional request
 ///         is returned.
-size_t lor_write(unsigned char* b, size_t bs, const lor_req_s* r, size_t rs);
+size_t lor_write(uint8_t* b, size_t bs, const lor_req_s* r, size_t rs);
 
 /// @typedef lor_intensity_fn
 /// @brief Represents a function that converts an arbitrary byte value to a
 ///        a scaled intensity value used by the LOR protocol.
-typedef lor_intensity (*lor_intensity_fn)(unsigned char b);
+typedef lor_intensity (*lor_intensity_fn)(uint8_t b);
 
 /// @brief Encodes a [0,0xFF] value into a roughly equivalent LOR intensity
 ///        value (precision is lossy) that is compatible with the protocol.
@@ -221,6 +222,6 @@ typedef lor_intensity (*lor_intensity_fn)(unsigned char b);
 ///       or custom implementations may be ideal for your specific use case.
 /// @param b The byte value to convert.
 /// @return The scaled intensity value.
-lor_intensity lor_get_intensity(unsigned char b);
+lor_intensity lor_get_intensity(uint8_t b);
 
 #endif// TINYLOR_H
