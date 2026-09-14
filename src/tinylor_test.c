@@ -45,21 +45,21 @@ int main(void) {
 
   assert(sizeof(LOR_HEARTBEAT_BYTES) == LOR_HEARTBEAT_SIZE);
 
-  test_channel_alignment(0, 0x00FF, (lor_channel_set){0, 0x00FF});
-  test_channel_alignment(0, 0xFF00, (lor_channel_set){0, 0xFF00});
-  test_channel_alignment(0, 0xFFFF, (lor_channel_set){0, 0xFFFF});
+  test_channel_alignment(0, 0x00FF, (lor_channel_set) {0, 0x00FF});
+  test_channel_alignment(0, 0xFF00, (lor_channel_set) {0, 0xFF00});
+  test_channel_alignment(0, 0xFFFF, (lor_channel_set) {0, 0xFFFF});
 
   // first channel at 16(n) will align with a 16-bit boundary and reduce to an offset of n
-  test_channel_alignment(16, 0x00FF, (lor_channel_set){1, 0x00FF});
-  test_channel_alignment(32, 0xFF00, (lor_channel_set){2, 0xFF00});
+  test_channel_alignment(16, 0x00FF, (lor_channel_set) {1, 0x00FF});
+  test_channel_alignment(32, 0xFF00, (lor_channel_set) {2, 0xFF00});
 
   // non-aligned first channel will align with the nearest 16-bit boundary and shift the bits
-  test_channel_alignment(4, 0x000F, (lor_channel_set){0, 0x00F0});
-  test_channel_alignment(8, 0x00FF, (lor_channel_set){0, 0xFF00});
-  test_channel_alignment(10, 0x000F, (lor_channel_set){0, 0x3C00});
-  test_channel_alignment(36, 0x0F00, (lor_channel_set){2, 0xF000});
-  test_channel_alignment(192, 0x000F, (lor_channel_set){12, 0x000F});
-  test_channel_alignment(193, 0x000F, (lor_channel_set){12, 0x001E});
+  test_channel_alignment(4, 0x000F, (lor_channel_set) {0, 0x00F0});
+  test_channel_alignment(8, 0x00FF, (lor_channel_set) {0, 0xFF00});
+  test_channel_alignment(10, 0x000F, (lor_channel_set) {0, 0x3C00});
+  test_channel_alignment(36, 0x0F00, (lor_channel_set) {2, 0xF000});
+  test_channel_alignment(192, 0x000F, (lor_channel_set) {12, 0x000F});
+  test_channel_alignment(193, 0x000F, (lor_channel_set) {12, 0x001E});
 
   return 0;
 }
