@@ -76,15 +76,15 @@ static int lor_encode_cset(uint8_t* const b,
   int w = 0;
   const uint8_t low = cset->cbits & 0xFF;
   const uint8_t high = cset->cbits >> 8;
-  uint8_t opts = 0;
   if (cset->offset) {
+    uint8_t opts = 0;
     if (low) {
       opts = high ? 0 : 0x80;// LOR_CHANNELSET_OPT_8H
     } else {
       opts = 0x40;// LOR_CHANNELSET_OPT_8L
     }
+    b[w++] = cset->offset | opts;
   }
-  b[w++] = cset->offset | opts;
   if (low) b[w++] = low;
   if (high) b[w++] = high;
   return w;
