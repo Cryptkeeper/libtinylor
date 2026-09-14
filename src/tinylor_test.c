@@ -51,6 +51,23 @@ static void assert_frame(const unsigned char* b, const size_t written,
   for (size_t i = 1; i + 1 < written; i++) assert(b[i] != 0);
 }
 
+/// @brief Tests the single channel byte encoding (0x80 | channel index).
+/// @param c The 0-based channel index to encode.
+/// @param expected The expected channel byte.
+static void test_single_channel_byte(const lor_channel c,
+                                     const unsigned char expected) {
+  lor_req_s req = {0};
+  lor_set_channel(&req, c);
+  lor_set_unit(&req, 1);                     // placeholder unit
+  lor_set_effect(&req, LOR_SET_LIGHTS, NULL);// placeholder effect
+
+  unsigned char b[32] = {0};
+  const size_t written = lor_write(b, sizeof(b), &req, 1);
+
+  const unsigned char frame[] = {0x00, 0x01, 0x01, expected, 0x00};
+  assert_frame(b, written, frame, sizeof(frame));
+}
+
 /// @brief Tests the encoded frame of a channel set request, from the leading
 ///        0x00 delimiter through the trailing one.
 /// @param cbits 16-bit bitset of channels to encode.
@@ -116,6 +133,15 @@ int main(void) {
   test_channel_alignment(192, 0x000F, (lor_channel_set) {12, 0x000F});
   test_channel_alignment(193, 0x000F, (lor_channel_set) {12, 0x001E});
 
+  // single channel byte is the 0-based channel index with bit 7 set
+  test_single_channel_byte(0, 0x80);
+  test_single_channel_byte(1, 0x81);
+  test_single_channel_byte(4, 0x84);
+  test_single_channel_byte(7, 0x87);
+  test_single_channel_byte(8, 0x88);// bit lives in the high mask byte
+  test_single_channel_byte(13, 0x8D);
+  test_single_channel_byte(15, 0x8F);
+
   // channel bytes immediately follow the command byte, without an offset byte
   test_channel_set_frame(0x0041,
                          (unsigned char[]) {0x00, 0x01, 0x31, 0x41, 0x00}, 5);
@@ -128,6 +154,9 @@ int main(void) {
   test_channel_set_frame(0x0000, (unsigned char[]) {0x00, 0x01, 0x41, 0x00}, 4);
 
   // effect parameters precede the channel bytes
+  test_intensity_frame(0x0004, 0x78,
+                       (unsigned char[]) {0x00, 0x01, 0x03, 0x78, 0x82, 0x00},
+                       6);
   test_intensity_frame(0x00FF, 0x78,
                        (unsigned char[]) {0x00, 0x01, 0x33, 0x78, 0xFF, 0x00},
                        6);

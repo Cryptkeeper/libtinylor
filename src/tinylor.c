@@ -66,6 +66,21 @@ lor_get_cset_format(const lor_channel_set* const cset) {
   return LOR_FMT_8H;
 }
 
+/// @brief Encodes a single-channel set as one byte: the channel's 0-based index
+///        with bit 7 set, as expected by the single-channel mode (0x00). Bit 7
+///        carries no information for the controller; it only ensures channel
+///        index 0 is not encoded as 0x00, the frame delimiter.
+/// @param b The buffer to write the channel byte to.
+/// @param cset The channel set to encode. Must have a zero offset and exactly
+///             one bit set (see lor_get_cset_format, LOR_FMT_SINGLE).
+/// @return The number of bytes written to the buffer, always 1.
+/// @note Caller is responsible for ensuring buffer is at least 1 byte in size.
+static int lor_encode_channel(uint8_t* const b,
+                              const lor_channel_set* const cset) {
+  b[0] = 0x80 | __builtin_ctz(cset->cbits);
+  return 1;
+}
+
 /// @brief Encodes a channel set into a buffer.
 /// @param b The buffer to write the channel set to.
 /// @param cset The channel set to encode.
@@ -73,6 +88,10 @@ lor_get_cset_format(const lor_channel_set* const cset) {
 /// @note Caller is responsible for ensuring buffer is at least 3 bytes in size.
 static int lor_encode_cset(uint8_t* const b,
                            const lor_channel_set* const cset) {
+  // zero value offset indicates it can fit within the direct addressing mode
+  // values above 0, even when single channel, must write as LOR_FMT_MULTIPART.
+  if (!cset->offset && __builtin_popcount(cset->cbits) == 1)
+    return lor_encode_channel(b, cset);
   int w = 0;
   const uint8_t low = cset->cbits & 0xFF;
   const uint8_t high = cset->cbits >> 8;
