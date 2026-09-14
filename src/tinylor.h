@@ -223,9 +223,9 @@ void lor_set_channel(lor_req_s* req, lor_channel c);
 ///              selects channel index \p first + n.
 void lor_set_channels(lor_req_s* req, lor_channel first, uint16_t cbits);
 
-/// @brief Configures the request to be sent to accepted by specified unit. A unit
-///        is required for all requests. A magic value of 0xFF may be used to
-///        broadcast the request to all units.
+/// @brief Configures the request to be sent to, and accepted by, the specified
+///        unit. A unit is required for all requests. A magic value of 0xFF may
+///        be used to broadcast the request to all units.
 /// @param req The request to configure.
 /// @param u The unit to send the request to, or 0xFF to broadcast to all units.
 void lor_set_unit(lor_req_s* req, lor_unit u);
@@ -246,9 +246,9 @@ void lor_set_units(lor_req_s* req, lor_unit_set* units);
 ///        require additional arguments, which are provided in the args field as
 ///        a union. If provided, the args field is copied into the request at
 ///        which point the caller may safely discard the original args. Any
-///        non-NULL arguments will be copied into the request, even if the effect
-///        does not require them. This allows future expansion of usable effects
-///        without modifying the behavior of the function.
+///        non-NULL arguments will be copied into the request, even if the
+///        effect does not require them. This allows future expansion of usable
+///        effects without modifying the behavior of the function.
 /// @param req The request to configure.
 /// @param e The effect to apply.
 /// @param args The effect arguments, required if effect is LOR_SET_INTENSITY,
