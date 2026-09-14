@@ -7,9 +7,12 @@
 #include <stdint.h>
 
 /// @typedef lor_channel
-/// @brief Represents a channel number, which is a unique identifier for a
-///        specific light or group of lights. Channels are typically in the
-///        range of [1, 1024].
+/// @brief Represents a 0-based channel index, which is a unique identifier for
+///        a specific light or group of lights on a unit. Index 0 is the first
+///        channel (shown as channel 1 in LOR software), index 15 is the 16th.
+///        Valid indices are [0, 1023]. Indices 16 and above address additional
+///        16-channel banks via the multipart channel format, which 16-channel
+///        controllers (e.g. CTB16PCg3) do not implement and silently discard.
 typedef uint16_t lor_channel;
 
 /// @typedef lor_intensity
@@ -19,9 +22,14 @@ typedef uint16_t lor_channel;
 typedef uint8_t lor_intensity;
 
 /// @typedef lor_unit
-/// @brief Represents a unit number, which is a unique identifier for a piece of
-///        LOR hardware. A value of 0xFF is reserved for broadcast messages.
-///        Units are typically in the range of [1, 0xF1] (1-241).
+/// @brief Represents a unit ID, which is a unique identifier for a piece of LOR
+///        hardware. Valid unit IDs are [1, 0xF0] (1-240); several units may
+///        share an ID, in which case they all execute the request. Reserved
+///        values: 0xFF (\p LOR_UNIT_ID_ALL) broadcasts to every unit, 0xF2
+///        (\p LOR_UNIT_ID_LIST) introduces a unit list (see \p lor_set_units),
+///        and 0xFE (\p LOR_UNIT_ID_HOST) marks replies sent from a unit to the
+///        host. 0x00 is the frame delimiter and must never be used. 0xF1 and
+///        0xF3-0xFD are unassigned; the CTB16PCg3 drops frames sent to them.
 typedef uint8_t lor_unit;
 
 /// @typedef lor_decisec
@@ -191,9 +199,15 @@ typedef struct lor_req {
   lor_unit_set* units;
 } lor_req_s;
 
-/// @brief Configures the request to use a single, absolute channel.
+/// @brief Configures the request to use a single channel, addressed by its
+///        0-based index (index 0 is channel 1 in LOR software). The index is
+///        encoded as `0x80 | index` in the single-channel format, so the
+///        controller receives it directly.
+/// @note The index is reduced modulo 1024. Indices 16 and above are split into
+///       a 16-channel bank offset and select the multipart format, which
+///       16-channel controllers do not implement (the request is dropped).
 /// @param req The request to configure.
-/// @param c The single, absolute channel to apply the effect to, less than 1024.
+/// @param c The 0-based channel index to apply the effect to, less than 1024.
 void lor_set_channel(lor_req_s* req, lor_channel c);
 
 /// @brief Configures the request to use a channel set, in the form of a 16-bit
@@ -203,8 +217,10 @@ void lor_set_channel(lor_req_s* req, lor_channel c);
 ///       bitsets are recommended for best results. You may set the request's
 ///       cset offset and cbits fields directly.
 /// @param req The request to configure.
-/// @param first The first channel in the set.
-/// @param cbits The 16-bit bitset of channels to apply the effect to.
+/// @param first The 0-based index of the first channel in the set, i.e. the
+///              channel selected by bit 0 of \p cbits (see \p lor_channel).
+/// @param cbits The 16-bit bitset of channels to apply the effect to; bit n
+///              selects channel index \p first + n.
 void lor_set_channels(lor_req_s* req, lor_channel first, uint16_t cbits);
 
 /// @brief Configures the request to be sent to accepted by specified unit. A unit
