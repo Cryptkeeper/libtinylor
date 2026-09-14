@@ -290,11 +290,16 @@ void lor_set_fade(lor_req_s* req, lor_intensity start, lor_intensity end,
 ///        ensure the buffer has enough space to hold the encoded data. The
 ///        function will attempt to write as many requests as possible to the
 ///        buffer, up to the provided request count.
-/// @return If all requests were written, the number of bytes written to the
-///         buffer is returned. If the buffer is too small to hold all requests,
-///         the number of bytes required to hold at least one additional request
-///         is returned.
-size_t lor_write(uint8_t* b, size_t bs, const lor_req_s* r, size_t rs);
+/// @param b The buffer to write the encoded requests to.
+/// @param bs The size of \p b in bytes.
+/// @param r The requests to encode, an array of at least \p rs elements.
+/// @param rs The number of requests in \p r to encode.
+/// @param wb Written byte count accumulator, may be NULL.
+/// @return The number of requests successfully written to the buffer. The size
+///         of the written requests in bytes is added to \p wb if it is not
+///         NULL.
+size_t lor_write(uint8_t* b, size_t bs, const lor_req_s* r, size_t rs,
+                 size_t* wb);
 
 /// @typedef lor_intensity_fn
 /// @brief Represents a function that converts an arbitrary byte value to a
@@ -523,7 +528,7 @@ static int lor_encode_effect(uint8_t* const b, const lor_effect e,
 #define LOR_MAX_UNIT_LIST 256
 
 size_t lor_write(uint8_t* b, const size_t bs, const lor_req_s* r,
-                 const size_t rs) {
+                 const size_t rs, size_t* wb) {
   size_t h = 0;
   // largest command parameters are ~25b, variable unit list up to
   // LOR_MAX_UNIT_LIST, then padded for safety
@@ -547,11 +552,15 @@ size_t lor_write(uint8_t* b, const size_t bs, const lor_req_s* r,
     w += lor_encode_effect(&t[w], req->effect, &req->args);
     w += lor_encode_cset(&t[w], &req->cset);
     t[w++] = 0;
-    if (h + w > bs) return w;
+    if (h + w > bs) {
+      if (wb != NULL) *wb += h;
+      return i;
+    }
     __builtin_memcpy(&b[h], t, w);
     h += w;
   }
-  return h;
+  if (wb != NULL) *wb += h;
+  return rs;
 }
 
 lor_intensity lor_get_intensity(const uint8_t b) {

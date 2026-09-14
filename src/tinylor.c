@@ -205,7 +205,7 @@ static int lor_encode_effect(uint8_t* const b, const lor_effect e,
 #define LOR_MAX_UNIT_LIST 256
 
 size_t lor_write(uint8_t* b, const size_t bs, const lor_req_s* r,
-                 const size_t rs) {
+                 const size_t rs, size_t* wb) {
   size_t h = 0;
   // largest command parameters are ~25b, variable unit list up to
   // LOR_MAX_UNIT_LIST, then padded for safety
@@ -229,11 +229,15 @@ size_t lor_write(uint8_t* b, const size_t bs, const lor_req_s* r,
     w += lor_encode_effect(&t[w], req->effect, &req->args);
     w += lor_encode_cset(&t[w], &req->cset);
     t[w++] = 0;
-    if (h + w > bs) return w;
+    if (h + w > bs) {
+      if (wb != NULL) *wb += h;
+      return i;
+    }
     __builtin_memcpy(&b[h], t, w);
     h += w;
   }
-  return h;
+  if (wb != NULL) *wb += h;
+  return rs;
 }
 
 lor_intensity lor_get_intensity(const uint8_t b) {

@@ -14,7 +14,7 @@ static void test_channel_format_header(const unsigned short cbits,
   lor_set_effect(&req, LOR_SET_OFF, NULL);// placeholder effect
 
   unsigned char b[32] = {0};
-  lor_write(b, sizeof(b), &req, 1);
+  lor_write(b, sizeof(b), &req, 1, NULL);
 
   // extract the encoded channel set format byte
   const unsigned char actual = b[2] & 0xF0;
@@ -62,7 +62,9 @@ static void test_single_channel_byte(const lor_channel c,
   lor_set_effect(&req, LOR_SET_LIGHTS, NULL);// placeholder effect
 
   unsigned char b[32] = {0};
-  const size_t written = lor_write(b, sizeof(b), &req, 1);
+  size_t written = 0;
+  const size_t n = lor_write(b, sizeof(b), &req, 1, &written);
+  assert(n == 1);
 
   const unsigned char frame[] = {0x00, 0x01, 0x01, expected, 0x00};
   assert_frame(b, written, frame, sizeof(frame));
@@ -82,7 +84,9 @@ static void test_channel_set_frame(const unsigned short cbits,
   lor_set_effect(&req, LOR_SET_LIGHTS, NULL);// placeholder effect
 
   unsigned char b[32] = {0};
-  const size_t written = lor_write(b, sizeof(b), &req, 1);
+  size_t written = 0;
+  const size_t n = lor_write(b, sizeof(b), &req, 1, &written);
+  assert(n == 1);
 
   assert_frame(b, written, expected, expected_size);
 }
@@ -102,7 +106,9 @@ static void test_intensity_frame(const unsigned short cbits,
   lor_set_intensity(&req, intensity);
 
   unsigned char b[32] = {0};
-  const size_t written = lor_write(b, sizeof(b), &req, 1);
+  size_t written = 0;
+  const size_t n = lor_write(b, sizeof(b), &req, 1, &written);
+  assert(n == 1);
 
   assert_frame(b, written, expected, expected_size);
 }
@@ -138,7 +144,9 @@ static void test_unit_list_frame(const lor_unit* units, const size_t us,
   lor_set_effect(&req, LOR_SET_LIGHTS, NULL);// no channels, all off (0x41)
 
   unsigned char b[64] = {0};
-  const size_t written = lor_write(b, sizeof(b), &req, 1);
+  size_t written = 0;
+  const size_t n = lor_write(b, sizeof(b), &req, 1, &written);
+  assert(n == 1);
 
   assert_frame(b, written, expected, expected_size);
 }

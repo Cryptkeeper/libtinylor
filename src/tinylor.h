@@ -282,11 +282,16 @@ void lor_set_fade(lor_req_s* req, lor_intensity start, lor_intensity end,
 ///        ensure the buffer has enough space to hold the encoded data. The
 ///        function will attempt to write as many requests as possible to the
 ///        buffer, up to the provided request count.
-/// @return If all requests were written, the number of bytes written to the
-///         buffer is returned. If the buffer is too small to hold all requests,
-///         the number of bytes required to hold at least one additional request
-///         is returned.
-size_t lor_write(uint8_t* b, size_t bs, const lor_req_s* r, size_t rs);
+/// @param b The buffer to write the encoded requests to.
+/// @param bs The size of \p b in bytes.
+/// @param r The requests to encode, an array of at least \p rs elements.
+/// @param rs The number of requests in \p r to encode.
+/// @param wb Written byte count accumulator, may be NULL.
+/// @return The number of requests successfully written to the buffer. The size
+///         of the written requests in bytes is added to \p wb if it is not
+///         NULL.
+size_t lor_write(uint8_t* b, size_t bs, const lor_req_s* r, size_t rs,
+                 size_t* wb);
 
 /// @typedef lor_intensity_fn
 /// @brief Represents a function that converts an arbitrary byte value to a

@@ -17,7 +17,9 @@ static void fade_to_black(const lor_unit unit, const lor_channel channel) {
   lor_set_fade(&req, start, end, 10);           // 1 second fade
 
   unsigned char b[32] = {0};// write buffer for encoded data
-  size_t written = lor_write(b, sizeof(b), &req, 1);
+  size_t written = 0;// number of bytes encoded into `b`
+  const size_t n = lor_write(b, sizeof(b), &req, 1, &written);
+  assert(n == 1);// all requests were encoded
   assert(written <= sizeof(b));// basic check for encoding success
 
   // send the encoded data in `b` to the device...
@@ -32,7 +34,9 @@ static void twinkle_alternating_channels(const lor_unit unit) {
   lor_set_effect(&req, LOR_TWINKLE, NULL);
 
   unsigned char b[32] = {0};// write buffer for encoded data
-  size_t written = lor_write(b, sizeof(b), &req, 1);
+  size_t written = 0;// number of bytes encoded into `b`
+  const size_t n = lor_write(b, sizeof(b), &req, 1, &written);
+  assert(n == 1);// all requests were encoded
   assert(written <= sizeof(b));// basic check for encoding success
 
   // send the encoded data in `b` to the device...
@@ -46,7 +50,9 @@ static void turn_off_unit(const lor_unit unit) {
   lor_set_effect(&req, LOR_SET_OFF, NULL);
 
   unsigned char b[32] = {0};// write buffer for encoded data
-  size_t written = lor_write(b, sizeof(b), &req, 1);
+  size_t written = 0;// number of bytes encoded into `b`
+  const size_t n = lor_write(b, sizeof(b), &req, 1, &written);
+  assert(n == 1);// all requests were encoded
   assert(written <= sizeof(b));// basic check for encoding success
 
   // send the encoded data in `b` to the device...
@@ -66,7 +72,9 @@ static void set_channel_intensity(const lor_unit unit,
   lor_set_intensity(&req, lor_get_intensity(intensity));
 
   unsigned char b[32] = {0};// write buffer for encoded data
-  size_t written = lor_write(b, sizeof(b), &req, 1);
+  size_t written = 0;// number of bytes encoded into `b`
+  const size_t n = lor_write(b, sizeof(b), &req, 1, &written);
+  assert(n == 1);// all requests were encoded
   assert(written <= sizeof(b));// basic check for encoding success
 
   // send the encoded data in `b` to the device...
